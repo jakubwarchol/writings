@@ -1,30 +1,26 @@
 # SwiftUI Guidelines
 
 - Models are your data structures and business logic  
-
 - Services are network clients, databases, utilities (injected via Environment), etc.  
-
 - Views are pure state representations that orchestrate user interactions  
-
 - Treat every SwiftUI view as a pure, disposable expression of state.  
   - Eliminate ViewModels, coordinators, or presenter layers; they fight SwiftUI's value‑type, frequently‑recreated view model.  
   - Lean on SwiftUI's diffing engine, automatic lifecycle management, and declarative state flow.  
-
 - Keep transient interaction state inside the view that consumes it.  
   - Split large views (subviews / extensions) instead of introducing ViewModels.  
   - When multiple children need the same transient state, lift it one level and pass bindings.  
-
 - Break complex screens into focused subviews (header, list, actions).  
   - Pass bindings when parents must allow children to mutate; otherwise children read from environment or immutable props.  
   - Prefer explicit bindings for write paths—improves discoverability.  
   - Use environment for cross‑cutting read‑mostly services.  
-
 - Model mutually exclusive conditions with a single enum; include associated data to avoid scattered Booleans or parallel arrays.  
   - Use `switch` for exhaustive rendering.  
-
 - Register domain services (API clients, auth handler, analytics, persistence) at the app root, making them available everywhere via `@Environment`.  
   - Ensure thread‑safety for concurrent access.  
-
 - Heavy work (image decoding, crypto, large database merges) lives in an actor‑backed service, never in a view or task modifier.  
-
 - Use Lifecycle Hooks over Delegates
+- Seed SwiftUI previews with realistic sample models and environments; they become your de‑facto documentation when no unit tests exist.
+- Use Lazy layouts (LazyVStack, LazyHStack, ScrollViewReader) for long lists to avoid layout thrashing and memory spikes.
+- Declare default values for every custom EnvironmentKey so previews and edge cases never crash.
+- Secure sensitive data with Keychain, not UserDefaults; wrap it in an actor‑backed SecureStore service.
+- Expose a unified error surface: every service returns domain‑level AppError; the root view translates it into user‑readable text and an enum case—no scattered alert modifiers.
